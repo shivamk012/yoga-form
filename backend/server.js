@@ -39,21 +39,21 @@ app.get("/api/user-detail", (req, res) => {
   });
 });
 
-app.get("/api/login", (req, res) => {
+app.post("/api/login", (req, res) => {
   const { username } = req.body;
   User.findOne({ username }, async (err, user) => {
     if (err) {
       return res.send(err);
     }
     if (!user) {
-      return res.sendStatus(404);
+      return res.status(404).send("User not found!");
     }
 
     try {
       if (await bcrypt.compare(req.body.password, user.password)) {
         res.send(username);
       } else {
-        res.sendStatus(401);
+        res.status(401).send("Password invalid!");
       }
     } catch (error) {
       res.sendStatus(500);
