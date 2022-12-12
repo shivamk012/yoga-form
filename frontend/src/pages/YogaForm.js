@@ -51,7 +51,7 @@ const YogaForm = () => {
     if (!name) {
       setError("Please enter your name");
       return;
-    } else if (typeof phone!=="number" || !phone) {
+    } else if (!phone) {
       setError("Please enter your mobile number");
       return;
     } else if (!age || age < 18 || age > 65) {
