@@ -28,3 +28,7 @@ Api's used -
     data entry in forms database and if user is present before a message is shown to user that you have made payment for this month or else if user is not found then form is shown.
 
 Using node-cron library , at the start of every month all the forms are refreshed and then user can again fill his / her form.
+
+The username state is gloablly accessible to each and every component of reactapp . This is achieved by using context and local storage of the browser. Two context UsernameContext and 
+UsernameUpdateContext are used which are responsibe for providing username at any point and updating username at any point. When a user if logged in , using UsernameUpdateContext 
+the username state is changed and when the value of username state is needed then UsernameContext is used.
