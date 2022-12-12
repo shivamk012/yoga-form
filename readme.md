@@ -1,3 +1,5 @@
+THE APP IS HOSTED AT : https://yoga-form-eses.onrender.com/
+
 Technologies Used : React Js , Node Js , MongoDB , Express , Mongoose , Axios
 
 According to the problem statement , the user have to fill the form then proceed to payment. Once the user have decided the batch he/she cannot change it. So a authentication system is 
