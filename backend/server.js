@@ -1,15 +1,20 @@
+import cron from "node-cron";
 import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import cors from "cors";
 import User from "./models/user.js";
 import Form from "./models/form.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+const port = process.env.PORT || 8000;
 
-mongoose.connect("mongodb://localhost:27017/yogaDB", () =>
+
+mongoose.connect(process.env.MONGODB_CONNECTION_URL, () =>
   console.log("Succefully Connected")
 );
 
@@ -25,6 +30,12 @@ app.get("/api/forms", (req, res) => {
   });
 });
 
+cron.schedule("* * 1 * *", () => {
+  Form.remove({}, () => {
+    console.log("refreshed all forms.");
+  });
+});
+
 app.get("/api/user-detail", (req, res) => {
   const { username } = req.query;
   Form.findOne({ username }, (err, form) => {
@@ -32,9 +43,9 @@ app.get("/api/user-detail", (req, res) => {
       return res.send(err);
     }
     if (!form) {
-      res.sendStatus(410);
+      res.send(false);
     } else {
-      res.send(form);
+      res.send(true);
     }
   });
 });
@@ -91,30 +102,21 @@ app.post("/api/signup", async (req, res) => {
 });
 
 app.post("/api/yoga-form", (req, res) => {
-  const { username } = req.query;
-  User.findOne({ username }, (err, user) => {
+  User.findOne({ username: req.body.username } , (err, user) => {
     if (err) {
       return res.send(err);
     }
     if (!user) {
       return res.sendStatus(404);
     }
-    const { age, batch, payment } = req.body;
-
-    Form.findOne({ username }, (err, user) => {
-      if (err) {
-        return res.send(err);
-      }
-      if (user) {
-        return res.send("Already Submitted");
-      }
-    });
+    const { username,name, phone, age, batch } = req.body;
 
     const form = new Form({
       username,
+      name,
+      phone,
       age,
       batch,
-      payment,
     });
 
     form.save((err) => {
@@ -127,23 +129,27 @@ app.post("/api/yoga-form", (req, res) => {
   });
 });
 
-app.patch("/api/yoga-form", (req, res) => {
-  const { username } = req.query;
-  User.findOne({ username }, (err, user) => {
-    if (err) {
-      return res.send(err);
-    }
-    if (!user) {
-      return res.sendStatus(404);
-    }
-
-    Form.updateOne({ username }, { $set: { payment: true } }, (err) => {
-      if (err) return res.send(err);
-      res.sendStatus(200);
-    });
-  });
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
 
-app.listen(8000, () => {
-  console.log("Server is listening on port 8000");
-});
+// Form.findOne({ username }, (err, u) => {
+//   if (err) {
+//     check = false;
+//     res.send(err);
+//   }
+//   if (u) {
+//     check = false;
+//     res.send("Already Submitted");
+//   }
+// });
+// console.log(check);
+// if(!check)return;
+
+// Form.findOne({ username, payment: true }, (err, u) => {
+//   if (u) {
+//     check = false;
+//     return res.send("Already made payment!");
+//   }
+// });
+// if (!check) return;

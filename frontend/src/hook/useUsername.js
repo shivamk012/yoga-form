@@ -1,16 +1,32 @@
-import { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 
-const useUsername = () => {
-  const [username, setUsername] = useState(null);
+const UsernameContext = React.createContext();
+const UsernameUpdateContext = React.createContext();
 
-  useEffect(() => {
+const useUsername = () => useContext(UsernameContext);
+const useUpdateUsername = () => useContext(UsernameUpdateContext);
+
+const UsernameProvider = ({children})=>{
+  const [username, setUsername] = useState(localStorage.getItem("username"));
+
+  const getUsername = ()=>{
     const foundUsername = localStorage.getItem("username");
-    if (foundUsername) {
+    if(foundUsername){
       setUsername(foundUsername);
     }
-  }, []);
+    else{
+      setUsername(null);
+    }
+  }
 
-  return username;
-};
+  return (
+    <UsernameContext.Provider value={username}>
+      <UsernameUpdateContext.Provider value={getUsername}>
+        {children}
+      </UsernameUpdateContext.Provider>
+    </UsernameContext.Provider>
+  )
+}
 
-export default useUsername;
+export default UsernameProvider;
+export { useUsername, useUpdateUsername };

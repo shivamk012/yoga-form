@@ -5,18 +5,25 @@ const formSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  name:{
+    type: String,
+    required: true,
+  },
+  phone:{
+    type: Number,
+    required: true
+  },
   age: {
     type: Number,
     required: true,
+    min: 18,
+    max: 65,
   },
   batch: {
     type: Number,
     required: true,
     min: 1,
     max: 4,
-  },
-  payment: {
-    type: Boolean,
   },
 });
 

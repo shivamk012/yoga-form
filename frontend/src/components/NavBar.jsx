@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import useUsername from "../hook/useUsername";
+import { useUpdateUsername, useUsername } from "../hook/useUsername";
 
 const NavBar = () => {
   const username = useUsername();
-
-  useEffect(()=>{
-  },[username]);
+  const func = useUpdateUsername();
 
   return (
     <nav>
@@ -21,7 +18,10 @@ const NavBar = () => {
           {!username ? (
             <Link to="/login">Login</Link>
           ) : (
-            <Link to="/" onClick={() => localStorage.removeItem("username")}>
+            <Link to="/" onClick={() => {
+              localStorage.removeItem("username");
+              func();
+            }}>
               Sign Out
             </Link>
           )}

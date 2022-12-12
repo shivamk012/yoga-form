@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useUpdateUsername } from "../hook/useUsername";
 
 const CreateAccountPage = () => {
   const [username, setUsername] = useState("");
@@ -8,6 +9,12 @@ const CreateAccountPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const func = useUpdateUsername();
+
+  useEffect(()=>{
+    localStorage.removeItem("username");
+    func();
+  },[]);
 
   const createAccount = async () => {
     if (password !== confirmPassword) {
@@ -31,6 +38,7 @@ const CreateAccountPage = () => {
       }
 
       localStorage.setItem("username", data);
+      func();
       navigate("/yoga-form");
     } catch (err) {
       setError(err);
@@ -59,7 +67,7 @@ const CreateAccountPage = () => {
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
       <button onClick={createAccount}>Create Account</button>
-      <Link to="/login">Already have an account? Log in here.</Link>
+      <Link to="/login" className="account-text">Already have an account? Log in here.</Link>
     </>
   );
 };
